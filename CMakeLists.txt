@@ -9,32 +9,41 @@ find_package(nlohmann_json CONFIG REQUIRED)
 find_package(CURL REQUIRED)
 
 add_library(oai_lib
-        liboai/components/audio.cpp
-        liboai/components/azure.cpp
-        liboai/components/chat.cpp
-        liboai/components/completions.cpp
-        liboai/components/edits.cpp
-        liboai/components/embeddings.cpp
-        liboai/components/files.cpp
-        liboai/components/fine_tunes.cpp
-        liboai/components/images.cpp
-        liboai/components/models.cpp
-        liboai/components/moderations.cpp
-        liboai/core/authorization.cpp
-        liboai/core/netimpl.cpp
-        liboai/core/response.cpp
-        liboai/include/liboai.h
+        source/components/audio.cpp
+        source/components/azure.cpp
+        source/components/chat.cpp
+        source/components/completions.cpp
+        source/components/edits.cpp
+        source/components/embeddings.cpp
+        source/components/files.cpp
+        source/components/fine_tunes.cpp
+        source/components/images.cpp
+        source/components/models.cpp
+        source/components/moderations.cpp
+        source/core/authorization.cpp
+        source/core/netimpl.cpp
+        source/core/response.cpp
 )
 add_library(oai::oai ALIAS oai_lib)
 target_compile_features(oai_lib PRIVATE cxx_std_17)
-target_include_directories(oai_lib PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/liboai/include>)
+target_include_directories(oai_lib PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/include>)
 target_link_libraries(oai_lib PRIVATE nlohmann_json::nlohmann_json CURL::libcurl)
 
+set_target_properties(oai_lib
+        PROPERTIES
+        LANGUAGE CXX
+        LINKER_LANGUAGE CXX
+        DEBUG_POSTFIX d
+        VERSION ${PROJECT_VERSION_MAJOR} ${PROJECT_VERSION_MINOR} ${PROJECT_VERSION_PATCH}
+        SOVERSION ${PROJECT_VERSION_MAJOR}
+        EXPORT_NAME "oai"
+)
+
 if (${PROJECT_NAME}_INSTALL)
-    set_property(DIRECTORY PROPERTY VS_STARTUP_PROJECT oai)
+    set_property(DIRECTORY PROPERTY VS_STARTUP_PROJECT oai_lib)
 
     # Install (i.e. copy) the library headers
-    install(DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/liboai/include/ DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/liboai")
+    install(DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 
     # Install the library target
     # oaiTargetsExportSet is the name of the export set that is created by the call to install(EXPORT)
