@@ -8,7 +8,7 @@ option(${PROJECT_NAME}_INSTALL "Install project targets" ON)
 find_package(nlohmann_json CONFIG REQUIRED)
 find_package(CURL REQUIRED)
 
-add_library(oai
+add_library(oai_lib
         liboai/components/audio.cpp
         liboai/components/azure.cpp
         liboai/components/chat.cpp
@@ -25,10 +25,10 @@ add_library(oai
         liboai/core/response.cpp
         liboai/include/liboai.h
 )
-add_library(oai::oai ALIAS oai)
-target_compile_features(oai PRIVATE cxx_std_17)
-target_include_directories(oai PUBLIC $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/liboai/include>)
-target_link_libraries(oai PRIVATE nlohmann_json::nlohmann_json CURL::libcurl)
+add_library(oai::oai ALIAS oai_lib)
+target_compile_features(oai_lib PRIVATE cxx_std_17)
+target_include_directories(oai_lib PUBLIC $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/liboai/include>)
+target_link_libraries(oai_lib PRIVATE nlohmann_json::nlohmann_json CURL::libcurl)
 
 if (${PROJECT_NAME}_INSTALL)
     set_property(DIRECTORY PROPERTY VS_STARTUP_PROJECT oai)
@@ -38,8 +38,8 @@ if (${PROJECT_NAME}_INSTALL)
 
     # Install the library target
     # oaiTargetsExportSet is the name of the export set that is created by the call to install(EXPORT)
-    install(TARGETS oai
-            EXPORT oaiTargetsExportSet
+    install(TARGETS oai_lib
+            EXPORT oai_libTargetsExportSet
             RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
             LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
             ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
@@ -52,8 +52,8 @@ if (${PROJECT_NAME}_INSTALL)
     include(${CMAKE_SOURCE_DIR}/cmake/setup_export_set_installation.cmake)
     setup_export_set_installation(
         ${PROJECT_NAME}
-        "oaiTargetsExportSet"
-        "Config.cmake.in"
+        oai_libTargetsExportSet
+        Config.cmake.in
         ${PROJECT_VERSION_MAJOR} ${PROJECT_VERSION_MINOR} ${PROJECT_VERSION_PATCH}
     )
 endif ()
