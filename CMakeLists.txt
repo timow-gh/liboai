@@ -27,14 +27,14 @@ add_library(oai_lib
 )
 add_library(oai::oai ALIAS oai_lib)
 target_compile_features(oai_lib PRIVATE cxx_std_17)
-target_include_directories(oai_lib PUBLIC $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/liboai/include>)
+target_include_directories(oai_lib PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/liboai/include>)
 target_link_libraries(oai_lib PRIVATE nlohmann_json::nlohmann_json CURL::libcurl)
 
 if (${PROJECT_NAME}_INSTALL)
     set_property(DIRECTORY PROPERTY VS_STARTUP_PROJECT oai)
 
     # Install (i.e. copy) the library headers
-    install(DIRECTORY "liboai/include/" DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/liboai")
+    install(DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/liboai/include/ DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/liboai")
 
     # Install the library target
     # oaiTargetsExportSet is the name of the export set that is created by the call to install(EXPORT)
