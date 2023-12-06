@@ -28,8 +28,7 @@ add_library(oai
 add_library(oai::oai ALIAS oai)
 target_compile_features(oai PRIVATE cxx_std_17)
 target_include_directories(oai PUBLIC $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/liboai/include>)
-target_link_libraries(oai PRIVATE nlohmann_json::nlohmann_json)
-target_link_libraries(oai PRIVATE CURL::libcurl)
+target_link_libraries(oai PRIVATE nlohmann_json::nlohmann_json CURL::libcurl)
 
 if (${PROJECT_NAME}_INSTALL)
     set_property(DIRECTORY PROPERTY VS_STARTUP_PROJECT oai)
